@@ -29,7 +29,7 @@ app.use(express.json());
 
 // CORS Configuration
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? (process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []) // Production frontend URL
+  ? (process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',').map(url => url.trim()) : []) // Production frontend URLs (comma-separated)
   : ['http://localhost:5173', 'http://localhost:5174']; // Development Vite ports
 
 // Add logging to debug CORS issues
