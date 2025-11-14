@@ -43,10 +43,10 @@ exports.getAdminDashboardStats = async (req, res) => {
         const totalBilled = bills.reduce((sum, bill) => sum + (bill.totalAmount || 0), 0);
         const collectionRate = totalBilled > 0 ? Math.round((totalRevenue / totalBilled) * 100) : 0;
         
-        // Recent invoices (last 10)
+        // Recent invoices (last 5)
         const recentInvoices = bills
             .sort((a, b) => new Date(b.date) - new Date(a.date))
-            .slice(0, 10)
+            .slice(0, 5)
             .map(bill => ({
                 id: `INV-${String(bill.invoiceNo).padStart(3, '0')}`,
                 _id: bill._id,
