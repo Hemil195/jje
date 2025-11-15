@@ -2,26 +2,29 @@ const nodemailer = require("nodemailer");
 
 // Email transporter configuration
 const createTransporter = () => {
-  // You can configure this for different email providers
-  // Gmail configuration (requires app-specific password)
+  // Use explicit SMTP configuration with better timeout handling
+  // Port 465 (SSL) is more reliable on cloud platforms like Render
   return nodemailer.createTransport({
-    service: "gmail",
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT) || 465,
+    secure: true, // Use SSL
     auth: {
       user: process.env.EMAIL_USER || "jayalarameelectricals@gmail.com",
       pass: process.env.EMAIL_PASSWORD || "your-app-specific-password",
     },
+    connectionTimeout: 10000, // 10 seconds
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
+    tls: {
+      rejectUnauthorized: true,
+      minVersion: 'TLSv1.2'
+    },
+    pool: true, // Use pooled connections
+    maxConnections: 5,
+    maxMessages: 100,
+    logger: process.env.NODE_ENV === 'production' ? false : true,
+    debug: process.env.NODE_ENV !== 'production'
   });
-
-  // Alternative configuration for other SMTP providers
-  // return nodemailer.createTransport({
-  //   host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  //   port: process.env.SMTP_PORT || 587,
-  //   secure: false,
-  //   auth: {
-  //     user: process.env.EMAIL_USER,
-  //     pass: process.env.EMAIL_PASSWORD
-  //   }
-  // });
 };
 
 // Send reply email to client
